@@ -1,0 +1,35 @@
+app.controller('regPayBankCtrl', function($scope, $rootScope, $routeParams, $location, $http, Data, $locale) {
+
+    $scope.dtOptions = {
+        pageLength: 10,
+        responsive:true,
+        lengthChange: true,
+        lengthMenu: [10, 15, 20, 25],
+        language: {
+            url: "json/Spanish.json"
+        }
+    };
+    $scope.regPay = [
+        {
+            numero: "1",
+            medio_pago: "Transferencia",
+            monto: "100000",
+            fecha:"01/01/2017"
+
+        },
+        {
+            numero: "2",
+            medio_pago: "Transferencia",
+            monto: "50000",
+            fecha:"24/12/2016"
+
+        },
+        {
+            numero: "3",
+            medio_pago: "Transferencia",
+            monto: "20000",
+            fecha:"02/02/2017"
+
+        }];
+    $scope.dataLoaded = true;
+});

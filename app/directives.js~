@@ -1,0 +1,333 @@
+app.directive('focus', function()
+{
+    return function(scope, element) {
+        element[0].focus();
+    }
+});
+
+app.directive('format', ['$filter', function ($filter) {
+    return {
+        require: '?ngModel',
+        link: function (scope, elem, attrs, ctrl) {
+            if (!ctrl) return;
+
+            ctrl.$formatters.unshift(function (a) {
+                return $filter(attrs.format)(ctrl.$modelValue)
+            });
+
+            elem.bind('blur', function(event) {
+                var plainNumber = elem.val().replace(/[^\d|\-+|\.+]/g, '');
+                elem.val($filter(attrs.format)(plainNumber));
+            });
+        }
+    };
+}]);
+
+
+app.directive('customOnChange', function() {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+      var onChangeFunc = scope.$eval(attrs.customOnChange);
+      element.bind('change', onChangeFunc);
+    }
+  };
+});
+
+
+app.directive('passwordMatch', [function ()
+{
+    return {
+        restrict: 'A',
+        scope:true,
+        require: 'ngModel',
+        link: function (scope, elem , attrs,control)
+        {
+            var checker = function () {
+
+                //get the value of the first password
+                var e1 = scope.$eval(attrs.ngModel);
+
+                //get the value of the other password
+                var e2 = scope.$eval(attrs.passwordMatch).$viewValue;
+                if(e2!=null)
+                return e1 == e2;
+            };
+            scope.$watch(checker, function (n) {
+
+                //set the form control to valid if both
+                //passwords are the same, else invalid
+                control.$setValidity("passwordNoMatch", n);
+            });
+        }
+    };
+}]);
+
+
+app.directive('dashboard', [function ()
+{
+    return {
+        restrict: 'A',
+        scope:true,
+        link: function (scope)
+		{
+            setTimeout(function()
+            {
+                jQuery("#horizontal").css({"width":"100%"});
+                var altura = $(window).height() -120;
+                $("#horizontal").height(altura);
+            },0);
+            $(window).resize(function(){
+              var altura = $(window).height() -120;
+              $("#horizontal").height(altura);
+            });
+		    scope.$on("$destroy",function()
+		    {
+		      // $(window).off();
+		       jQuery(scope).off();
+    		   scope = null;
+ 			});
+        }
+    };
+}]);
+
+
+app.directive('centro', [function () {
+    return {
+        restrict: 'A',
+        scope:true,
+        link: function (scope)
+        {
+
+            var altura = $(window).height() -120;
+            $(".contenedorCentral").height(altura);
+            $(window).resize(function(){
+              var altura = $(window).height() -120;
+              $(".contenedorCentral").height(altura);
+            });
+
+            scope.$on("$destroy",function()
+            {
+               //$(window).off();
+               jQuery(scope).off();
+               scope = null;
+            });
+        }
+    }
+}]);
+
+app.directive('alto', [function () {
+    return {
+        restrict: 'A',
+        scope:true,
+        link: function (scope)
+        {
+            setTimeout(function()
+            {
+                $("#horizontal").css({"overflow":"auto"});
+            },0);
+        }
+    }
+}]);
+
+
+app.directive('menureal', [function () {
+    return {
+        restrict: 'A',
+        scope:true,
+        link: function (scope)
+        {
+
+            var altura = $(window).height() -120;
+            $("#sidebar-wrapper").height(altura);
+            $(window).resize(function(){
+              var altura = $(window).height() -120;
+              $("#sidebar-wrapper").height(altura);
+            });
+
+            scope.$on("$destroy",function()
+            {
+               //$(window).off();
+               jQuery(scope).off();
+               scope = null;
+            });
+        }
+    }
+}]);
+
+
+app.directive('login', [function () {
+    return {
+        restrict: 'A',
+        scope:true,
+        link: function (scope)
+		{
+            jQuery("#contenedorFormularioLogin").css({"height":"768px"});
+		    scope.$on("$destroy",function()
+		    {
+		       //$(window).off();
+		       jQuery(scope).off();
+    		   scope = null;
+ 			});
+	    }
+    };
+}]);
+
+
+
+
+
+
+app.directive('nodiv', [function () {
+    return {
+        restrict: 'A',
+        scope:true,
+        link: function (scope)
+        {
+            jQuery("#contenedorFormularioLogin").css({"height":"768px","overflow":"hidden"});
+        }
+    };
+}]);
+
+app.directive('nobar', [function () {
+    return {
+        restrict: 'A',
+        scope:true,
+        link: function (scope)
+		{
+		    setTimeout(function()
+			{
+				$("#contenedorInfo").remove();
+                $("#contenedorBotonesPrincipales").remove();
+			},10);
+        }
+    };
+}]);
+
+app.directive('integer', [function () {
+    return {
+        require: 'ngModel',
+        link: function(scope, ele, attr, ctrl){
+            ctrl.$parsers.unshift(function(viewValue){
+                return parseInt(viewValue, 10);
+            });
+        }
+    };
+}]);
+
+app.directive('float', [function () {
+    return {
+        require: 'ngModel',
+        link: function(scope, ele, attr, ctrl){
+            ctrl.$parsers.unshift(function(viewValue){
+                return parseFloat(viewValue);
+            });
+        }
+    };
+}]);
+
+app.directive('ayuda', [function () {
+    return {
+        restrict: 'A',
+        scope:true,
+        link: function (scope)
+        {
+          $(function () {
+            $('[data-toggle="popover"]').popover(
+              {
+                trigger:"hover"
+              });
+          });
+
+        }
+    }
+}]);
+
+app.directive('menuPortal', [function () {
+    return {
+        restrict: 'A',
+        templateUrl: 'partials/menu.html'
+    }
+}]);
+
+app.directive('validNumber', function() {
+  return {
+    require: '?ngModel',
+    link: function(scope, element, attrs, ngModelCtrl) {
+      if(!ngModelCtrl) {
+        return;
+      }
+
+      ngModelCtrl.$parsers.push(function(val) {
+        if (angular.isUndefined(val)) {
+            var val = '';
+        }
+        var clean = val.replace(/[^0-9\.]/g, '');
+        var decimalCheck = clean.split('.');
+
+        if(!angular.isUndefined(decimalCheck[1])) {
+            decimalCheck[1] = decimalCheck[1].slice(0,2);
+            clean =decimalCheck[0] + '.' + decimalCheck[1];
+        }
+
+        if (val !== clean) {
+          ngModelCtrl.$setViewValue(clean);
+          ngModelCtrl.$render();
+        }
+        return clean;
+      });
+
+      element.bind('keypress', function(event) {
+        if(event.keyCode === 32) {
+          event.preventDefault();
+        }
+      });
+    }
+  };
+});
+app.directive('numberComma', function() {
+    return {
+        require: '?ngModel',
+        link: function(scope, element, attrs, ngModelCtrl) {
+            if(!ngModelCtrl) {
+                return;
+            }
+
+            ngModelCtrl.$parsers.push(function(val) {
+                if (angular.isUndefined(val)) {
+                    var val = '';
+                }
+                var clean = val.replace(/[^\d{1,3}(,\d{3})*(\.\d+)?$]/g, '');
+                var decimalCheck = clean.split('.');
+
+                if(!angular.isUndefined(decimalCheck[1])) {
+                    decimalCheck[1] = decimalCheck[1].slice(0,2);
+                    clean =decimalCheck[0] + '.' + decimalCheck[1];
+                }
+
+                if (val !== clean) {
+                    ngModelCtrl.$setViewValue(clean);
+                    ngModelCtrl.$render();
+                }
+                return clean;
+            });
+
+            element.bind('keypress', function(event) {
+                if(event.keyCode === 32) {
+                    event.preventDefault();
+                }
+            });
+        }
+    };
+});
+
+
+/*app.directive("myDirective", function($document) {
+  return  {
+    link: function(scope, element, attrs, ngModelCtrl) {
+      console.log(element[0].children[0])
+    }
+
+  };
+});
+*/
