@@ -1,26 +1,20 @@
 var app = angular.module('myApp', ['ngRoute', 'ngAnimate']);
 
-
-app.config(['$routeProvider',
-  function ($routeProvider) {
-        $routeProvider.when('/home', {
-            title: 'Home',
-            templateUrl: 'partials/home.html',
-            controller: 'homeCtrl'
-        })
-
-		    .otherwise({
-		        redirectTo: '/home'
-		    });
-  }])
-.run(function ($rootScope, $location, Data,  $templateCache) {
+app.config(['$routeProvider','$locationProvider',function ($routeProvider, $locationProvider) {
+	  $locationProvider.hashPrefix('');
+    $routeProvider
+      .when('/', {
+        templateUrl: 'partials/home.html',
+        controller: 'homeCtrl'
+      })
+      .otherwise({
+        redirectTo: '/'
+      });
+  }]);
+.run(function ($rootScope, $location, $templateCache) {
 
 });
 
-app.config(function ($httpProvider)
-{
-    $httpProvider.interceptors.push('AuthInterceptor');
-});
 
 app.config(['$httpProvider', function ($httpProvider)
 {
