@@ -11,7 +11,7 @@ app.config(['$routeProvider','$locationProvider',function ($routeProvider, $loca
         redirectTo: '/'
       });
   }]);
-.run(function ($rootScope, $location, $templateCache) {
+app.run(function ($rootScope, $location, $templateCache) {
 
 });
 
